@@ -3,7 +3,7 @@
 -- * CT/2020/076 FARVEES J.M.S. farvees-ct20076@stu.kln.ac.lk
 -- * CT/2017/001 ABDULLAH M.N.  abdullah_ct17001@stu.kln.ac.lk
 -- Date Created 
--- * 4th May 2025
+-- * 10th May 2025
 
 -- connect with banking_system user
 CONNECT banking_system/banking123@localhost:1521/xepdb1 
@@ -37,11 +37,12 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('Test Case 001 [Create Staff] Executed!');
   DBMS_OUTPUT.PUT_LINE('New Staff ID : ' || staff_id);
-
 EXCEPTION
 WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
 END;
 /
+
+SELECT * FROM staffs;
 
 -- Test Case 002
 -- Check functionality of create_branch function
@@ -65,6 +66,8 @@ EXCEPTION
 WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
 END;
 /
+
+SELECT * FROM branches;
 
 -- Test Case 003
 -- Check functionality of create_customer function
@@ -94,6 +97,8 @@ WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
 END;
 /
 
+SELECT * FROM customers;
+
 -- Test Case 004
 -- Check functionality of create_account function
 DECLARE
@@ -120,6 +125,8 @@ WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
 END;
 /
 
+SELECT * FROM accounts;
+
 -- Test Case 005
 -- Check functionality of create_card function
 DECLARE
@@ -139,6 +146,8 @@ EXCEPTION
 WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
 END;
 /
+
+SELECT * FROM cards;
 
 -- Test Case 006
 -- Check functionality of create_transaction function
@@ -191,6 +200,8 @@ WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
 END;
 /
 
+SELECT * FROM transactions;
+
 -- Test Case 007
 -- Check functionality of create_transaction function
 -- Transaction Method in ATM/CDM
@@ -231,5 +242,17 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('Transaction Log ID : ' || v_transaction_log_id);
 EXCEPTION
 WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
+END;
+/
+
+SELECT * FROM transaction_logs;
+
+-- Test Case 008
+-- See all transaction made by a customer
+DECLARE
+  account_id NUMBER;
+BEGIN
+  account_id := 10000007;
+  show_customer_transactions(p_account_id => account_id);
 END;
 /

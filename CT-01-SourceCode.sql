@@ -329,3 +329,73 @@ EXCEPTION
     RETURN v_result;
 END;
 /
+
+-- Procedure for show transactions of a customer
+CREATE OR REPLACE PROCEDURE show_customer_transactions(
+  p_account_id IN NUMBER
+) IS
+  v_count NUMBER;
+BEGIN
+  -- Validate account_id
+  SELECT COUNT(*)
+  INTO v_count
+  FROM accounts
+  WHERE account_id = p_account_id;
+  IF v_count = 0 THEN
+    DBMS_OUTPUT.PUT_LINE('Error: Invalid account ID');
+    RETURN;
+  END IF;
+  -- Print header
+  DBMS_OUTPUT.PUT_LINE(
+    RPAD('Transaction ID', 14) || ' | ' ||
+    RPAD('Account ID', 11) || ' | ' ||
+    RPAD('Transaction Type', 16) || ' | ' ||
+    RPAD('Amount', 8) || ' | ' ||
+    RPAD('Transaction Time', 20) || ' | ' ||
+    RPAD('Channel', 10) || ' | ' ||
+    RPAD('Reason', 20)
+  );
+  DBMS_OUTPUT.PUT_LINE(
+    RPAD('-', 14, '-') || '-+-' ||
+    RPAD('-', 11, '-') || '-+-' ||
+    RPAD('-', 16, '-') || '-+-' ||
+    RPAD('-', 8, '-') || '-+-' ||
+    RPAD('-', 20, '-') || '-+-' ||
+    RPAD('-', 10, '-') || '-+-' ||
+    RPAD('-', 20, '-')
+  );
+  -- Implicit cursor with FOR loop
+  v_count := 0;
+  FOR trans IN (
+    SELECT transaction_id,
+           account_id,
+           transaction_type,
+           amount,
+           transaction_time,
+           channel,
+           NVL(transaction_reason, 'N/A') AS transaction_reason
+    FROM transactions
+    WHERE account_id = p_account_id
+    ORDER BY transaction_time DESC NULLS LAST
+  ) LOOP
+    v_count := v_count + 1;
+    DBMS_OUTPUT.PUT_LINE(
+      RPAD(NVL(TO_CHAR(trans.transaction_id), ' '), 14) || ' | ' ||
+      RPAD(NVL(TO_CHAR(trans.account_id), ' '), 11) || ' | ' ||
+      RPAD(NVL(trans.transaction_type, ' '), 16) || ' | ' ||
+      RPAD(NVL(TO_CHAR(trans.amount, '99999999'), ' '), 8) || ' | ' ||
+      RPAD(NVL(TO_CHAR(trans.transaction_time, 'YYYY-MM-DD HH24:MI:SS'), ' '), 20) || ' | ' ||
+      RPAD(NVL(trans.channel, ' '), 10) || ' | ' ||
+      RPAD(NVL(trans.transaction_reason, ' '), 20)
+    );
+  END LOOP;
+  IF v_count = 0 THEN
+    DBMS_OUTPUT.PUT_LINE('No transactions found for account ID: ' || p_account_id);
+  END IF;
+  DBMS_OUTPUT.PUT_LINE('------- End of Transactions -------');
+
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END show_customer_transactions;
+/
