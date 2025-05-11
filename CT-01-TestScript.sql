@@ -179,19 +179,19 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('Test Case 006 [Create Transaction for ATM/Online] Executed!');
   IF v_result.status = 1 THEN
     v_transaction_id := create_transaction(
-      p_account_id => v_result.account_id,
-      p_transaction_type => v_transaction_type,
-      p_amount => v_amount,
-      p_channel => v_channel,
-      p_reason => v_reson
-    );
-    DBMS_OUTPUT.PUT_LINE('Transaction ID : ' || v_transaction_id);
+    p_account_id => v_result.account_id,
+    p_transaction_type => v_transaction_type,
+    p_amount => v_amount,
+    p_channel => v_channel,
+    p_reason => v_reson
+  );
+  DBMS_OUTPUT.PUT_LINE('Transaction ID : ' || v_transaction_id);
     v_transaction_log_id := create_transaction_log(
-      p_transaction_id => v_transaction_id,
-      p_authorized_by => NULL,
-      p_role => v_role
-    );
-    DBMS_OUTPUT.PUT_LINE('Transaction Log ID : ' || v_transaction_log_id);
+    p_transaction_id => v_transaction_id,
+    p_authorized_by => NULL,
+    p_role => v_role
+  );
+  DBMS_OUTPUT.PUT_LINE('Transaction Log ID : ' || v_transaction_log_id);
   ELSE
     DBMS_OUTPUT.PUT_LINE('Invalid Credientials');
   END IF;
@@ -201,6 +201,7 @@ END;
 /
 
 SELECT * FROM transactions;
+SELECT * FROM transaction_logs;
 
 -- Test Case 007
 -- Check functionality of create_transaction function
@@ -245,10 +246,11 @@ WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error : ' || SQLERRM);
 END;
 /
 
+SELECT * FROM transactions;
 SELECT * FROM transaction_logs;
 
 -- Test Case 008
--- See all transaction made by a customer
+-- See all transaction made by a customer using show_customer_transaction procedure
 DECLARE
   account_id NUMBER;
 BEGIN
